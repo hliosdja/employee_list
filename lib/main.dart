@@ -60,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     void deleteRecord({int? id}) async {
+      print('deleted a record');
       await DatabaseHelper.delete(table: 'employee', where: 'id = ?', whereArgs: [id]);
     }
 
@@ -102,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                     child: Dismissible(
                       background: Container(color: Colors.red),
-                      key: Key(info),
+                      key: UniqueKey(),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -121,9 +122,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                       onDismissed: (direction) {
+                        deleteRecord(id: emp.employeeList[index].id);
                         setState(() {
                           emp.employeeList.removeAt(index);
-                          deleteRecord(id: emp.employeeList[index].id);
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -134,9 +135,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   );
                 },
-                separatorBuilder: (BuildContext context, int index) => Divider(),
+                separatorBuilder: (BuildContext context, int index) => const Divider(),
               ),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(onPressed: () => DatabaseHelper.deleteTableData(), child: const Text('Delete all table data')),
           ],
         ),
       ),

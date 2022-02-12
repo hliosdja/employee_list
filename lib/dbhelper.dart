@@ -8,14 +8,45 @@ class DatabaseHelper {
   //database operations
   static Future<void> insert({dynamic model, String? table}) async {
     await db?.insert(table!, model.toMap());
+
+    //for debug
+    final data = await db?.query('employee');
+    data?.forEach((element) {
+      print(element);
+    });
   }
 
   static Future<void> update({dynamic model, String? table, String? where, List<dynamic>? whereArgs}) async {
     await db?.update(table!, model.toMap(), where: where, whereArgs: whereArgs);
+
+    //for debug
+    final data = await db?.query('employee');
+    data?.forEach((element) {
+      print(element);
+    });
+  }
+
+  //pang kuha ng data according sa condition
+  //example: await db?.query('employee', where: 'name = ?', whereArgs: ['Adela'])
+  //example: await db?.query('employee', where: 'name = ? && id = ?', whereArgs: ['Adela', 10])
+  static Future<void> inquire({String? table, String? where, List<dynamic>? whereArgs}) async {
+    await db?.query(table!, where: where, whereArgs: whereArgs);
+
+    //for debug
+    final data = await db?.query('employee');
+    data?.forEach((element) {
+      print(element);
+    });
   }
 
   static Future<void> delete({String? table, String? where, List<dynamic>? whereArgs}) async {
     await db?.delete(table!, where: where, whereArgs: whereArgs);
+
+    //for debug
+    final data = await db?.query('employee');
+    data?.forEach((element) {
+      print(element);
+    });
   }
 
   static Future<int?> getEmployeeCount({String? query}) async {
@@ -29,8 +60,14 @@ class DatabaseHelper {
   }
 
   //gamit to pang create ng table
-  static Future<void> onCreate(Database? db, int? version) async {
+  static void onCreate(Database? db, int? version) async {
     await db?.execute('CREATE TABLE employee (id INT, name TEXT, job TEXT)');
+  }
+
+  //pang delete lahat ng data sa table
+  static void deleteTableData() async {
+    print('table data deleted');
+    await db?.rawQuery('delete from employee');
   }
 
   //pang start ng database
